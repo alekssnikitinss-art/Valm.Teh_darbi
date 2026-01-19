@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript piemēri</title>
+
+    <!-- Pievienojam CSS failu -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1 id="mainText">Sveiki! Šis ir JavaScript tests</h1>
+
+    <!-- Alert poga -->
+    <button onclick="showAlert()">Parādīt alert</button>
+
+    <br><br>
+
+    <!-- Teksta maiņa -->
+    <button onclick="changeText()">Mainīt tekstu</button>
+
+    <br><br>
+
+    <!-- Kalkulators -->
+    <h2>Kalkulators</h2>
+    <input type="number" id="num1" placeholder="Pirmais skaitlis">
+    <input type="number" id="num2" placeholder="Otrais skaitlis">
+    <button onclick="calculate()">Aprēķināt</button>
+
+    <p>Rezultāts: <span id="result">0</span></p>
+
+    <br>
+
+    <!-- Sveiciena funkcija -->
+    <button onclick="greetUser()">Sveicināt</button>
+
+    <!-- Pievienojam JavaScript failu -->
+    <script src="script.js"></script>
+</body>
+</html>
