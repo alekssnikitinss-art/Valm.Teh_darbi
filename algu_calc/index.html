@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algas Kalkulators - Valmieras Tehnikums</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="calculator-box">
+            <h1>💰 Algas Kalkulators</h1>
+            
+            <!-- Main Input Section -->
+            <div class="input-section">
+                <h2>Ievadi datus</h2>
+                
+                <!-- Calculation Direction -->
+                <div class="direction-selector">
+                    <label class="radio-group">
+                        <input type="radio" name="direction" value="bruto-to-neto" checked>
+                        <span>Bruto → Neto</span>
+                    </label>
+                    <label class="radio-group">
+                        <input type="radio" name="direction" value="neto-to-bruto">
+                        <span>Neto → Bruto</span>
+                    </label>
+                </div>
+
+                <!-- Salary Input -->
+                <label for="salary">Alga (EUR):</label>
+                <input type="number" id="salary" placeholder="Ievadi summu" step="0.01" min="0">
+
+                <!-- Settings Section -->
+                <div class="settings-section">
+                    <h3>Parametri</h3>
+                    
+                    <!-- Tax Booklet Checkbox -->
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="taxBooklet">
+                        <span>Ir algas nodokļa grāmatiņa</span>
+                    </label>
+
+                    <!-- Dependents -->
+                    <label for="dependents">Apgādājamo skaits:</label>
+                    <input type="number" id="dependents" placeholder="0" min="0" value="0">
+
+                    <!-- Tax Configuration -->
+                    <div class="tax-config">
+                        <label for="vsaoi">VSAOI (%):</label>
+                        <input type="number" id="vsaoi" step="0.1" value="10.5">
+
+                        <label for="iin">IIN (%):</label>
+                        <input type="number" id="iin" step="0.1" value="20">
+
+                        <label for="employer-vsaoi">Darba devēja VSAOI (%):</label>
+                        <input type="number" id="employer-vsaoi" step="0.1" value="13.6">
+                    </div>
+
+                    <!-- Deductions Toggles -->
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="deductionsEnabled" checked>
+                        <span>Piemērot atvieglojumus</span>
+                    </label>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button id="calculateBtn" class="btn btn-primary">Aprēķināt</button>
+                    <button id="clearBtn" class="btn btn-secondary">Notīrīt</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="output-section">
+                <h2>Rezultāti</h2>
+                
+                <!-- Error Message -->
+                <div id="errorMessage" class="error-message" style="display:none;"></div>
+
+                <!-- Results Summary -->
+                <div id="results" style="display:none;">
+                    <div class="results-summary">
+                        <div class="result-item highlight">
+                            <span class="label">Neto alga (uz rokas):</span>
+                            <span class="value" id="netSalary">€0.00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="label">Bruto alga:</span>
+                            <span class="value" id="grossSalary">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Deductions Breakdown -->
+                    <div class="deductions-section">
+                        <h3>Ieturējumi darbiniekam:</h3>
+                        <div class="deduction-row">
+                            <span class="label">VSAOI:</span>
+                            <span class="value" id="vsaoiDeduction">€0.00</span>
+                        </div>
+                        <div class="deduction-row">
+                            <span class="label">IIN:</span>
+                            <span class="value" id="iinDeduction">€0.00</span>
+                        </div>
+                        <div class="deduction-row">
+                            <span class="label">Kopā ieturējumi:</span>
+                            <span class="value total" id="totalDeductions">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Employer Costs -->
+                    <div class="employer-section">
+                        <h3>Darba devēja izmaksas:</h3>
+                        <div class="deduction-row">
+                            <span class="label">Darba devēja VSAOI:</span>
+                            <span class="value" id="employerVsaoi">€0.00</span>
+                        </div>
+                        <div class="deduction-row">
+                            <span class="label">Kopējās izmaksas:</span>
+                            <span class="value total" id="totalEmployerCost">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Detailed View Toggle -->
+                    <label class="checkbox-group" style="margin-top: 1.5rem;">
+                        <input type="checkbox" id="detailedView">
+                        <span>Detalizēts skats</span>
+                    </label>
+
+                    <!-- Detailed Table -->
+                    <div id="detailedTable" class="detailed-table" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Parametrs</th>
+                                    <th>Procents</th>
+                                    <th>Summa (EUR)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Bruto alga</td>
+                                    <td>100%</td>
+                                    <td id="dt-bruto">€0.00</td>
+                                </tr>
+                                <tr class="deduction-row">
+                                    <td>VSAOI</td>
+                                    <td id="dt-vsaoi-pct">0%</td>
+                                    <td id="dt-vsaoi">€0.00</td>
+                                </tr>
+                                <tr class="deduction-row">
+                                    <td>IIN</td>
+                                    <td id="dt-iin-pct">0%</td>
+                                    <td id="dt-iin">€0.00</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>Neto alga</td>
+                                    <td id="dt-neto-pct">0%</td>
+                                    <td id="dt-neto">€0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Darba devēja VSAOI</td>
+                                    <td id="dt-emp-vsaoi-pct">0%</td>
+                                    <td id="dt-emp-vsaoi">€0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
