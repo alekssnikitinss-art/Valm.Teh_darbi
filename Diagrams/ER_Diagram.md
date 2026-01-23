@@ -32,14 +32,14 @@ erDiagram
         varchar(255) name
         text description
         enum status
-        decimal(5,2) estimated_hours
+        decimal estimated_hours
     }
 
     TimeLogs {
         int timelog_id PK
         int task_id FK
         date date
-        decimal(5,2) hours
+        decimal hours
         text description
     }
 
@@ -47,7 +47,7 @@ erDiagram
         int invoice_id PK
         int project_id FK
         int client_id FK
-        decimal(10,2) amount
+        decimal amount
         date date_issued
         date due_date
         enum status
