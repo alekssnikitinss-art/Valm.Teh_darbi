@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS FreelancerProjectTracker;
 USE FreelancerProjectTracker;
 
 -- Create Clients table
-CREATE TABLE Clients (
+CREATE TABLE IF NOT EXISTS Clients (
     client_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE Clients (
 );
 
 -- Create Projects table
-CREATE TABLE Projects (
+CREATE TABLE IF NOT EXISTS Projects (
     project_id INT AUTO_INCREMENT PRIMARY KEY,
     client_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE Projects (
 );
 
 -- Create Tasks table
-CREATE TABLE Tasks (
+CREATE TABLE IF NOT EXISTS Tasks (
     task_id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE Tasks (
 );
 
 -- Create TimeLogs table
-CREATE TABLE TimeLogs (
+CREATE TABLE IF NOT EXISTS TimeLogs (
     timelog_id INT AUTO_INCREMENT PRIMARY KEY,
     task_id INT NOT NULL,
     date DATE NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE TimeLogs (
 );
 
 -- Create Invoices table
-CREATE TABLE Invoices (
+CREATE TABLE IF NOT EXISTS Invoices (
     invoice_id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
     client_id INT NOT NULL,
