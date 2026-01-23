@@ -63,31 +63,31 @@ CREATE TABLE IF NOT EXISTS Invoices (
 -- Sample Data Inserts (3 entries as requested)
 
 -- Insert Clients
-INSERT INTO Clients (name, email, phone, address) VALUES
+INSERT IGNORE INTO Clients (name, email, phone, address) VALUES
 ('ABC Corp', 'contact@abc.com', '123-456-7890', '123 Main St, City, State'),
 ('XYZ Ltd', 'info@xyz.com', '987-654-3210', '456 Elm St, City, State'),
 ('Tech Solutions', 'hello@techsol.com', '555-123-4567', '789 Oak St, City, State');
 
 -- Insert Projects
-INSERT INTO Projects (client_id, name, description, start_date, end_date, status) VALUES
+INSERT IGNORE INTO Projects (client_id, name, description, start_date, end_date, status) VALUES
 (1, 'Website Redesign', 'Redesign company website', '2023-01-01', '2023-03-01', 'completed'),
 (2, 'Mobile App Development', 'Develop mobile app for client', '2023-02-01', NULL, 'ongoing'),
 (3, 'SEO Optimization', 'Optimize website for search engines', '2023-03-01', '2023-04-01', 'completed');
 
 -- Insert Tasks
-INSERT INTO Tasks (project_id, name, description, status, estimated_hours) VALUES
+INSERT IGNORE INTO Tasks (project_id, name, description, status, estimated_hours) VALUES
 (1, 'Design Mockups', 'Create design mockups', 'done', 20.00),
 (2, 'Backend Development', 'Develop backend API', 'in_progress', 40.00),
 (3, 'Keyword Research', 'Research keywords', 'done', 10.00);
 
 -- Insert TimeLogs
-INSERT INTO TimeLogs (task_id, date, hours, description) VALUES
+INSERT IGNORE INTO TimeLogs (task_id, date, hours, description) VALUES
 (1, '2023-01-15', 8.00, 'Worked on initial designs'),
 (2, '2023-02-10', 6.50, 'Set up database schema'),
 (3, '2023-03-05', 4.00, 'Analyzed competitor keywords');
 
 -- Insert Invoices
-INSERT INTO Invoices (project_id, client_id, amount, date_issued, due_date, status) VALUES
+INSERT IGNORE INTO Invoices (project_id, client_id, amount, date_issued, due_date, status) VALUES
 (1, 1, 5000.00, '2023-03-01', '2023-03-15', 'paid'),
 (2, 2, 8000.00, '2023-04-01', '2023-04-15', 'unpaid'),
 (3, 3, 2000.00, '2023-04-01', '2023-04-15', 'paid');
