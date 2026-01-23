@@ -121,24 +121,48 @@ function calculateBrutoToNeto(bruto, vsaoiRate, iinRate, employerVsaoiRate, depe
 }
 
 // ========================================
-// NETO TO BRUTO CALCULATION (Iterative)
+// NETO TO BRUTO CALCULATION (Binary Search)
 // ========================================
 function calculateNetoToBruto(neto, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled) {
-    // Simple iterative approach to find bruto from neto
-    let bruto = neto * 1.4; // Initial estimate
+    // Use binary search for robust convergence
+    let minBruto = neto;  // Minimum possible bruto
+    let maxBruto = neto * 3;  // Maximum possible bruto (safeguard)
     
-    for (let i = 0; i < 100; i++) {
-        const result = calculateBrutoToNeto(bruto, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled);
+    // Find reasonable upper bound
+    for (let attempt = 0; attempt < 10; attempt++) {
+        const result = calculateBrutoToNeto(maxBruto, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled);
+        if (result.neto >= neto) {
+            break;  // Found upper bound
+        }
+        maxBruto *= 2;
+        if (maxBruto > 1000000) {
+            // Safety check - something is very wrong
+            return calculateBrutoToNeto(neto * 1.5, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled);
+        }
+    }
+    
+    // Binary search for exact bruto value
+    for (let i = 0; i < 50; i++) {
+        const midBruto = (minBruto + maxBruto) / 2;
+        const result = calculateBrutoToNeto(midBruto, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled);
         const diff = result.neto - neto;
         
+        // If we're close enough, return
         if (Math.abs(diff) < 0.01) {
             return result;
         }
         
-        bruto += diff / (1 - (vsaoiRate + iinRate) / 100);
+        // Adjust search bounds
+        if (diff < 0) {
+            minBruto = midBruto;  // Neto too low, need higher bruto
+        } else {
+            maxBruto = midBruto;  // Neto too high, need lower bruto
+        }
     }
     
-    return calculateBrutoToNeto(bruto, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled);
+    // Return best approximation found
+    const finalBruto = (minBruto + maxBruto) / 2;
+    return calculateBrutoToNeto(finalBruto, vsaoiRate, iinRate, employerVsaoiRate, dependents, taxBooklet, deductionsEnabled);
 }
 
 // ========================================
