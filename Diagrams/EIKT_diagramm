@@ -1,27 +1,24 @@
 erDiagram
-USER ||--o{ LOAN : borrows
-BOOK ||--o{ LOAN : is_loaned
+    USER ||--o{ LOAN : borrows
+    BOOK ||--o{ LOAN : is_loaned
 
+    USER {
+        int id PK
+        string name
+        string email
+    }
 
-USER {
-int id PK
-string name
-string email
-}
+    BOOK {
+        int id PK
+        string title
+        string author
+        string isbn
+    }
 
-
-BOOK {
-int id PK
-string title
-string author
-string isbn
-}
-
-
-LOAN {
-int id PK
-int user_id FK
-int book_id FK
-date borrow_date
-date return_date
-}
+    LOAN {
+        int id PK
+        int user_id FK
+        int book_id FK
+        date borrow_date
+        date return_date
+    }
