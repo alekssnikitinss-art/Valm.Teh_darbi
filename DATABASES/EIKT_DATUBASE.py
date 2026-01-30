@@ -1,48 +1,96 @@
+===== Bibliotēkas sistēma: Python + MySQL =====
+
+Prasības: pip install mysql-connector-python
+
 import mysql.connector
-from datetime import date
 
-# 6.1. MySQL savienojums
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="library"
-)
-cursor = db.cursor()
+----- Datubāzes konfigurācija -----
 
-# 6.2. Tabulas izveide
+DB_CONFIG = { "host": "localhost", "user": "root", "password": "password", "database": "biblioteka" }
+
+----- Savienojums -----
+
+def get_connection(): return mysql.connector.connect(**DB_CONFIG)
+
+----- Tabulu izveide -----
+
+def create_tables(): conn = get_connection() cursor = conn.cursor()
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS books (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255),
-    author VARCHAR(255),
-    isbn VARCHAR(20) UNIQUE
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    isbn VARCHAR(20) UNIQUE NOT NULL
 )
 """)
-db.commit()
 
-# 6.3. Datu struktūra atmiņā
-library = {}
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE
+)
+""")
 
-# 6.4. Book klase
-class Book:
-    def __init__(self, id, title, author, isbn):
-        self.id = id
-        self.title = title
-        self.author = author
-        self.isbn = isbn
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS loans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT,
+    user_id INT,
+    loan_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES books(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+)
+""")
 
-# 6.5. Ielāde no MySQL
-def load_books():
-    cursor.execute("SELECT * FROM books")
-    for row in cursor.fetchall():
-        book = Book(*row)
-        library[book.isbn] = book
+conn.commit()
+conn.close()
 
-# 6.6. Saglabāšana MySQL
-def save_book(book):
-    cursor.execute(
-        "INSERT INTO books (title, author, isbn) VALUES (%s,%s,%s)",
+----- Funkcijas -----
+
+def add_book(title, author, isbn): conn = get_connection() cursor = conn.cursor() cursor.execute("INSERT INTO books (title, author, isbn) VALUES (%s, %s, %s)", (title, author, isbn)) conn.commit() conn.close() print("Grāmata pievienota!")
+
+def search_book(keyword): conn = get_connection() cursor = conn.cursor() cursor.execute("SELECT * FROM books WHERE title LIKE %s OR author LIKE %s", (f"%{keyword}%", f"%{keyword}%")) results = cursor.fetchall() conn.close()
+
+if results:
+    for row in results:
+        print(row)
+else:
+    print("Nav atrasta neviena grāmata.")
+
+def delete_book(book_id): conn = get_connection() cursor = conn.cursor() cursor.execute("DELETE FROM books WHERE id=%s", (book_id,)) conn.commit() conn.close() print("Grāmata dzēsta!")
+
+----- Konsoles izvēlne -----
+
+def menu(): while True: print("\n--- Bibliotēkas sistēma ---") print("1 - Pievienot grāmatu") print("2 - Meklēt grāmatu") print("3 - Dzēst grāmatu") print("0 - Iziet")
+
+choice = input("Izvēle: ")
+
+    if choice == "1":
+        title = input("Nosaukums: ")
+        author = input("Autors: ")
+        isbn = input("ISBN: ")
+        add_book(title, author, isbn)
+
+    elif choice == "2":
+        keyword = input("Meklēšanas vārds: ")
+        search_book(keyword)
+
+    elif choice == "3":
+        book_id = input("Grāmatas ID: ")
+        delete_book(book_id)
+
+    elif choice == "0":
+        break
+
+    else:
+        print("Nepareiza izvēle!")
+
+----- Programmas starts -----
+
+if name == "main": create_tables() menu()
         (book.title, book.author, book.isbn)
     )
     db.commit()
