@@ -1,0 +1,20 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "1984",
+      "author": "George Orwell",
+      "isbn": "9780451524935",
+      "reserved": false,
+      "reserved_by": null
+    },
+    {
+      "id": 2,
+      "title": "Brīvība",
+      "author": "Auts",
+      "isbn": "9780000000002",
+      "reserved": false,
+      "reserved_by": null
+    }
+  ]
+}
