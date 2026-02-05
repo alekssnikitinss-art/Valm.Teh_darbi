@@ -7,6 +7,8 @@ main{padding:20px;display:flex;gap:24px}
 .hidden{display:none}
 .book{background:white;padding:10px;margin-bottom:8px;border-radius:4px;box-shadow:0 0 4px rgba(0,0,0,.03)}
 .book button{float:right}
+ .book-images{margin-top:8px;display:flex;gap:8px;align-items:center}
+ .book-thumb{width:80px;height:90px;object-fit:cover;border:1px solid #ddd;border-radius:4px}
 input{padding:6px;margin-right:6px}
 footer{padding:8px 20px;background:#fff;border-top:1px solid #eee}
 .reserved-by{color:#666;font-size:0.9em;margin-top:6px}

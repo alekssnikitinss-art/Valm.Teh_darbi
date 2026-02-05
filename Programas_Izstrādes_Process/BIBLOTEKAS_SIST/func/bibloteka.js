@@ -5,6 +5,8 @@ const qs = s => document.querySelector(s);
 const qsa = s => document.querySelectorAll(s);
 
 let currentUser = null;
+let isAdmin = false;
+let adminCreds = null; // {username, password}
 
 async function api(path, opts={}){
     try{
@@ -35,6 +37,24 @@ function renderBooks(books){
         const div = document.createElement('div');
         div.className = 'book';
         div.innerHTML = `<strong>${escapeHtml(b.title)}</strong> — ${escapeHtml(b.author)} <br> <small>ISBN: ${escapeHtml(b.isbn)}</small>`;
+
+        // images
+        if(b.images && b.images.length){
+            const imgWrap = document.createElement('div'); imgWrap.className='book-images';
+            b.images.forEach(fn=>{
+                const img = document.createElement('img');
+                img.src = API_HOST + '/images/' + encodeURIComponent(fn);
+                img.className = 'book-thumb';
+                imgWrap.appendChild(img);
+                if(isAdmin){
+                    const delImgBtn = document.createElement('button'); delImgBtn.textContent='X'; delImgBtn.title='Delete image';
+                    delImgBtn.onclick = ()=> deleteImage(b.isbn, fn);
+                    imgWrap.appendChild(delImgBtn);
+                }
+            })
+            div.appendChild(imgWrap);
+        }
+
         const btn = document.createElement('button');
         if(b.reserved){
             btn.textContent = 'Rezervēta'; btn.disabled = true;
@@ -44,11 +64,36 @@ function renderBooks(books){
             btn.onclick = () => reserveBook(b.isbn);
         }
         div.appendChild(btn);
+
+        if(isAdmin){
+            const del = document.createElement('button'); del.textContent='Dzēst'; del.style.marginLeft='8px';
+            del.onclick = async ()=>{
+                if(!confirm('Dzēst grāmatu?')) return;
+                const body = {isbn: b.isbn}; if(adminCreds){ body.admin_username = adminCreds.username; body.admin_password = adminCreds.password; }
+                const res = await api(API_HOST + '/api/admin/delete_book', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+                if(res && res.ok){ await loadBooks(); alert('Izdzēsts'); } else alert('Neizdevās: '+(res && res.error));
+            };
+            div.appendChild(del);
+
+            // image upload
+            const uploadInput = document.createElement('input'); uploadInput.type='file'; uploadInput.accept='image/*';
+            const uploadBtn = document.createElement('button'); uploadBtn.textContent='Augšupielādēt attēlu';
+            uploadBtn.onclick = async ()=>{
+                const f = uploadInput.files[0]; if(!f){ alert('Izvēliet failu'); return }
+                const fd = new FormData(); fd.append('isbn', b.isbn); fd.append('image', f, f.name);
+                if(adminCreds){ fd.append('admin_username', adminCreds.username); fd.append('admin_password', adminCreds.password); }
+                const r = await fetch(API_HOST + '/api/admin/upload_image', {method:'POST', body: fd});
+                const jr = await r.json();
+                if(jr && jr.ok){ await loadBooks(); alert('Attēls pievienots'); } else alert('Neizdevās: '+(jr && jr.error));
+            }
+            div.appendChild(uploadInput); div.appendChild(uploadBtn);
+        }
+
         root.appendChild(div);
     })
 }
 
-function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) }
+function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>\"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) }
 
 async function reserveBook(isbn){
     if(!currentUser){
@@ -72,9 +117,9 @@ async function doLogin(){
     if(res && res.ok){
         currentUser = u;
         qs('#login-status').textContent = 'Ielogots kā '+u;
-        if(res.admin) showAdmin();
-        // save to cache via backend
-    await api(API_HOST + '/api/cache_user', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username:u,password:p})});
+        if(res.admin){ showAdmin(); isAdmin = true; adminCreds = {username: u, password: p}; }
+        // save to cache via backend (idempotent)
+        await api(API_HOST + '/api/cache_user', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username:u,password:p})});
     }else{
         qs('#login-status').textContent = 'Nepareiza parole';
     }
@@ -82,6 +127,18 @@ async function doLogin(){
 
 function showAdmin(){
     qs('#admin-section').classList.remove('hidden');
+}
+// load admin reservations into admin panel
+function loadReservations(){
+    if(!isAdmin || !adminCreds) return;
+    const headers = {'X-Admin-Username': adminCreds.username, 'X-Admin-Password': adminCreds.password};
+    fetch(API_HOST + '/api/admin/reservations', {headers}).then(r=>r.json()).then(jr=>{
+        const container = qs('#admin-reservations');
+        if(jr && jr.ok){
+            const list = jr.reservations.map(r=>`<div>${escapeHtml(r.title)} — ${escapeHtml(r.author)} (ISBN: ${escapeHtml(r.isbn)}) — rezervēja: ${escapeHtml(r.reserved_by||'—')}</div>`).join('');
+            container.innerHTML = list || '<i>Nav rezervāciju</i>';
+        } else container.innerHTML = '<i>Nevar ielādēt rezervācijas</i>';
+    }).catch(e=>{ console.error(e); });
 }
 
 async function addBook(){
@@ -97,6 +154,14 @@ async function addBook(){
     }else{
         alert('Neizdevās pievienot: '+(res && res.error || 'unknown'));
     }
+}
+
+async function deleteImage(isbn, filename){
+    if(!confirm('Dzēst attēlu?')) return;
+        const body = {isbn, filename};
+        if(adminCreds){ body.admin_username = adminCreds.username; body.admin_password = adminCreds.password; }
+        const res = await api(API_HOST + '/api/admin/delete_image', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    if(res && res.ok){ await loadBooks(); alert('Attēls dzēsts'); } else alert('Neizdevās: '+(res && res.error));
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
