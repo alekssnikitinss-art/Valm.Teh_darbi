@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="lv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pārbaudes darbs (HTML/CSS/JS)</title>
+
+  <style>
+    /* 1) Gaišs lapas fons */
+    body {
+        background-color: #f5f5f5;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* 2) Centrēts konteineris ar max platumu ~ 900px, padding, border un noapaļotiem stūriem */
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 30px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 3) Noformē h1, p (lasāms fonts, atstarpes) */
+    h1 {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 28px;
+        color: blue;
+        margin: 0 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #007BFF;
+    }
+
+    p {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 18px;
+        color: #555;
+        line-height: 1.8;
+        margin: 0 0 20px 0;
+    }
+
+    /* 4) Vismaz 2 atdalīšanas līnijas */
+    hr {
+        border: none;
+        border-top: 2px solid #007BFF;
+        margin: 25px 0;
+        opacity: 0.5;
+    }
+
+    section {
+        margin-bottom: 30px;
+    }
+
+    .grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 15px;
+    }
+
+    .container .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .container > section:first-of-type .grid > div {
+        max-width: 250px;
+        width: 100%;
+    }
+
+    /* 5) Noformē ievades laukus un pogas */
+    input[type="number"], 
+    select {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 15px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        background-color: #6DACE2;
+        color: black;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    input[type="number"]:focus, 
+    select:focus {
+        outline: none;
+        border-color: #0056b3;
+        box-shadow: 0 0 5px rgba(0, 102, 204, 0.3);
+    }
+
+    input[type="number"]::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    input[type="radio"] {
+        margin-right: 8px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    /* Price group container */
+    #priceGroup {
+        border: 2px solid #ddd;
+        padding: 35px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    #pricealert {
+        color: #666;
+        font-size: 15px;
+        margin-top: 10px;
+        margin-left: 0px;
+        font-weight: normal;
+        display: block;
+    }
+
+    #priceGroup label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-weight: normal;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    #priceGroup label:last-child {
+        margin-bottom: 0;
+    }
+
+    #priceGroup label:hover {
+        background-color: #e8f4f8;
+    }
+
+    .standard-label {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-left: 6px;
+    }
+
+    .discount-note {
+        font-size: 13px;
+        color: #666;
+        margin-top: 10px;
+        margin-left: 6px;
+        font-weight: normal;
+    }
+
+    /* Discount container */
+    .discount-container {
+        border: 2px solid #ddd;
+        padding: 35px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .discount-container label {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+
+    .discount-container label:hover {
+        background-color: #e8f4f8;
+    }
+
+    input[type="checkbox"] {
+        margin-right: 8px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    /* Buttons */
+    .buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        justify-content: flex-start;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        background-color: #007BFF;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+    }
+
+    button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 123, 255, 0.3);
+    }
+
+    #saveBtn {
+        background-color: #28a745;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    }
+
+    #saveBtn:hover {
+        background-color: #218838;
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+    }
+
+    #saveBtn:active {
+        box-shadow: 0 1px 2px rgba(40, 167, 69, 0.3);
+    }
+
+    #clearBtn {
+        background-color: #dc3545;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    }
+
+    #clearBtn:hover {
+        background-color: #c82333;
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+    }
+
+    #clearBtn:active {
+        box-shadow: 0 1px 2px rgba(220, 53, 69, 0.3);
+    }
+
+    /* 6) Rezultāta laukam kartītes izskats */
+    #resultLabel {
+        border: 2px solid #007BFF;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #f0f8ff;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.8;
+        min-height: 100px;
+        box-shadow: 0 2px 6px rgba(0, 123, 255, 0.15);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .container {
+            margin: 15px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 15px;
+        }
+
+        .container .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .container > section:first-of-type .grid > div {
+            max-width: 100%;
+        }
+
+        .buttons {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+        }
+    }
+    
+    /*
+      TODO (CSS):
+      1) Uzliec lapai gaišu fonu.
+      2) Izveido centrētu konteineri ar max platumu ~ 900px, padding, border un noapaļotiem stūriem.
+      3) Noformē h1, p (lasāms fonts, atstarpes).
+      4) Izveido vismaz 2 atdalīšanas līnijas (hr vai border).
+      5) Noformē ievades laukus un pogas (hover obligāts).
+      6) "Rezultāts" laukam izveido kartītes izskatu (border, padding, white-space: pre-wrap).
+    */
+    
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>Teātra biļešu kase</h1>
+    <p>Izvēlies izrādi, biļetes cenu un sēdvietu skaitu. Saglabā izvēli, lai aprēķinātu kopējo apmaksu.</p>
+
+    <hr />
+
+    <!-- IEVADES: IZRĀDE + SĒDVIETAS -->
+    <section aria-label="Ievade">
+      <div class="grid">
+        <div>
+          <label for="playSelect">Izrāde</label>
+          <select id="playSelect">
+            <option value="Romeo un Džuljeta">Romeo un Džuljeta</option>
+            <option value="Hamlets">Hamlets</option>
+            <option value="Šekspīra komēdijas">Šekspīra komēdijas</option>
+            <option value="Zelta Ziedi">Zelta Ziedi</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="seatCount">Sēdvietu skaits (1–20)</label>
+          <input id="seatCount" type="number" min="1" max="20" step="1" value="1" />
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- IEVADES: CENA + ATLAIDE -->
+    <section aria-label="Cena un atlaide">
+      <div class="grid">
+        <div>
+          <label>Biļetes cena (izvēlies vienu)</label>
+          <div id="priceGroup">
+            <label>
+              <input type="radio" name="ticketPrice" value="10" />
+              10 EUR <span class="standard-label">(standarta)</span>
+            </label>
+            <label>
+              <input type="radio" name="ticketPrice" value="15" />
+              15 EUR <span class="standard-label">(standarta)</span>
+            </label>
+            <label>
+              <input type="radio" name="ticketPrice" value="20" />
+              20 EUR <span class="standard-label">(standarta)</span>
+            </label>
+          </div>
+          <p id="pricealert">Ja cena netiks izvēlēta, tā netiks apreķināta</p>
+        </div>
+
+        <div>
+          <label>Atlaide (30%)</label>
+          <div class="discount-container">
+            <label>
+              <input id="discountCheckbox" type="checkbox" />
+              Skolēns / Students / Pensionārs
+            </label>
+            <p class="discount-note">biļetes atlaide tiks piemērota cenai</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- POGAS -->
+    <section aria-label="Darbības">
+      <div class="buttons">
+        <button id="saveBtn" type="button">Saglabāt izvēli</button>
+        <button id="clearBtn" type="button">Notīrīt</button>
+      </div>
+    </section>
+
+    <hr />
+
+    <!-- IZVADE -->
+    <section aria-label="Rezultāts">
+      <label>Rezultāts</label>
+      <div id="resultLabel"></div>
+    </section>
+  </main>
+
+  <script>
+    // DOM atsauces
+    const playSelect = document.getElementById("playSelect");
+    const seatCount = document.getElementById("seatCount");
+    const discountCheckbox = document.getElementById("discountCheckbox");
+    const saveBtn = document.getElementById("saveBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const resultLabel = document.getElementById("resultLabel");
+
+    function getSelectedPriceEUR() {
+      const priceInputs = document.querySelectorAll('input[name="ticketPrice"]');
+      for (let input of priceInputs) {
+        if (input.checked) {
+          return Number(input.value);
+        }
+      }
+      return null;
+    }
+
+    function readFormData() {
+      return {
+        play: playSelect.value,
+        seats: Number(seatCount.value),
+        priceEUR: getSelectedPriceEUR(),
+        hasDiscount: discountCheckbox.checked
+      };
+    }
+
+    function validateData(data) {
+      if (data.priceEUR === null) {
+        alert("Lūdzu, izvēlies biļetes cenu!");
+        return false;
+      }
+      if (!Number.isInteger(data.seats) || data.seats < 1 || data.seats > 20) {
+        alert("Sēdvietu skaitam jābūt veselam skaitlim no 1 līdz 20!");
+        return false;
+      }
+      return true;
+    }
+
+    function calculateTotalEUR(data) {
+      const discountMultiplier = data.hasDiscount ? 0.70 : 1.00;
+      const finalTicketPrice = parseFloat((data.priceEUR * discountMultiplier).toFixed(2));
+      const total = parseFloat((finalTicketPrice * data.seats).toFixed(2));
+      return {
+        finalTicketPrice: finalTicketPrice,
+        total: total
+      };
+    }
+
+    function renderResult(data, totals) {
+      const discountText = data.hasDiscount ? "Jā" : "Nē";
+      const result = `Izvēlētā izrāde: ${data.play}
+Sēdvietu skaits: ${data.seats}
+Cena par biļeti: ${totals.finalTicketPrice} EUR
+Atlaide: ${discountText}
+Kopā apmaksa: ${totals.total} EUR`;
+      resultLabel.innerText = result;
+    }
+
+    function clearAll() {
+      playSelect.value = "Romeo un Džuljeta";
+      seatCount.value = "1";
+      discountCheckbox.checked = false;
+      const priceInputs = document.querySelectorAll('input[name="ticketPrice"]');
+      priceInputs.forEach(input => input.checked = false);
+      resultLabel.innerText = "";
+    }
+
+    // Notikumu apstrāde
+    saveBtn.addEventListener("click", function () {
+      const data = readFormData();
+      if (!validateData(data)) return;
+      const totals = calculateTotalEUR(data);
+      renderResult(data, totals);
+    });
+
+    clearBtn.addEventListener("click", function () {
+      clearAll();
+      alert("Veidlapa notīrīta.");
+    });
+
+    // Sākuma stāvoklis
+    clearAll();
+  </script>
+</body>
+</html>
