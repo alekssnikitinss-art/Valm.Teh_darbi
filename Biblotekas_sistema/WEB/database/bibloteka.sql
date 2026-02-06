@@ -1,0 +1,3 @@
+-- bibloteka SQL dump (auto-updated)
+-- Table layout (for reference):
+-- CREATE TABLE books (id INTEGER PRIMARY KEY, title TEXT, author TEXT, isbn TEXT UNIQUE);
