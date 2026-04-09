@@ -1,101 +1,156 @@
-# E-komercijas produktu meklēšanas sistēma
-
-## 1. Ievads
-
-Šī darba mērķis ir izstrādāt e-komercijas produktu meklēšanas sistēmu Python valodā, kas spēj ātri un precīzi atrast produktus pēc lietotāja meklēšanas vaicājuma.
-
-Sistēma izstrādāta darbam terminālī un atbalsta:
-- teksta meklēšanu pēc produkta nosaukuma un apraksta
-- filtrēšanu pēc kategorijas
-- filtrēšanu pēc zīmola
-- meklēšanu noteiktā cenu diapazonā
-- pieejamības statusa pārbaudi
-- rezultātu kārtošanu pēc relevances, cenas, reitinga un datuma
-- auto-complete funkcionalitāti
-- typo tolerance
-
-Šīs prasības atbilst uzdevuma aprakstam par e-komercijas produktu meklēšanas sistēmu. :contentReference[oaicite:0]{index=0}
-
----
-
-## 2. Prasību analīze
-
-### 2.1. Funkcionālās prasības
-
-Sistēmai jānodrošina:
-- teksta meklēšana produktu nosaukumos un aprakstos
-- kategoriju filtrēšana
-- cenu diapazona meklēšana
-- zīmolu filtrēšana
-- pieejamības pārbaude
-- rezultātu kārtošana
-- auto-complete un typo tolerance :contentReference[oaicite:1]{index=1}
-
-### 2.2. Nefunkcionālās prasības
-
-Sistēmai jānodrošina:
-- atbildes laiks mazāks par 200 ms standarta meklēšanai
-- spēja apstrādāt 1000+ vienlaicīgas meklēšanas
-- efektīva darbība ar 1M+ produktiem
-- RAM patēriņš ne lielāks par 4 GB uz 100K produktu
-- indeksa izmērs ne lielāks par 150% no sākotnējo datu izmēra
-- korekta kļūdu apstrāde :contentReference[oaicite:2]{index=2}
-
----
-
-## 3. Algoritma izvēle un pamatojums
-
-### 3.1. Izvēlētais risinājums
-
-Sistēmā tiek izmantots kombinēts risinājums:
-
-- **Inverted Index** — teksta meklēšanai
-- **Trie** — auto-complete funkcionalitātei
-- **HashMap / dict / set** — kategoriju, zīmolu un pieejamības filtriem
-- **Sakārtots cenu saraksts ar `bisect`** — cenu diapazona meklēšanai
-
-Šāda pieeja atbilst arī ieteiktajiem risinājumiem uzdevuma materiālā, kur minēti Inverted Index, koka struktūras, jaucējtabulas un B-tree/B+ tree. :contentReference[oaicite:3]{index=3}
-
-### 3.2. Pamatojums
-
-#### Inverted Index
-Inverted Index ir galvenā datu struktūra teksta meklēšanai. Tā vietā, lai katru reizi pārmeklētu visus produktus, sistēma glabā vārdus un tiem atbilstošos produktu ID. Tas ievērojami paātrina meklēšanu.
-
-#### Trie
-Trie tiek izmantots prefiksu meklēšanai. Tas ļauj ātri atrast vārdus, kas sākas ar lietotāja ievadīto prefiksu, tāpēc tas ir piemērots auto-complete funkcijai.
-
-#### HashMap / Set
-Šīs struktūras nodrošina ļoti ātru filtrēšanu pēc kategorijas, zīmola un pieejamības. Tās ir vienkāršas, efektīvas un labi piemērotas šāda veida uzdevumiem.
-
-#### Sakārtots cenu saraksts
-Cenu diapazona meklēšanai tiek izmantots sakārtots saraksts un binārā meklēšana (`bisect`). Tas ļauj ātri atrast produktus noteiktā cenu intervālā.
-
----
-
-## 4. Alternatīvu salīdzinājums
-
-| Risinājums | Priekšrocības | Trūkumi |
-|---|---|---|
-| Lineārā meklēšana | Vienkārša implementācija | Lēna pie lieliem datu apjomiem |
-| SQL `LIKE` meklēšana | Viegli uztaisīt datubāzē | Slikta mērogojamība un relevance |
-| Tikai Trie | Ātrs prefix search | Nav piemērots pilnteksta meklēšanai |
-| Tikai HashMap | Ātri filtri | Nespēj efektīvi veikt pilnteksta meklēšanu |
-| Inverted Index + Trie + filtri | Ātrs, mērogojams, atbalsta visas prasības | Sarežģītāka implementācija |
-
-### Secinājums
-Optimālākais risinājums ir kombinēt vairākas datu struktūras, jo neviena atsevišķa struktūra nespēj efektīvi izpildīt visas prasības vienlaikus.
-
----
-
-## 5. Sistēmas arhitektūra
+# E-komercijas produktu meklēšanas sistēma (Pilna Mermaid dokumentācija)
 
 ```mermaid
 flowchart TD
-    A[Lietotājs ievada vaicājumu] --> B[Tokenizācija un normalizācija]
-    B --> C[Inverted Index meklēšana]
-    C --> D[Typo tolerance]
-    D --> E[Filtrēšana pēc kategorijas / zīmola / pieejamības]
-    E --> F[Cenu diapazona filtrs]
-    F --> G[Relevance score aprēķins]
-    G --> H[Kārtošana]
-    H --> I[Rezultātu izvade]
+
+%% =====================================================
+%% TITLE
+%% =====================================================
+TITLE["E-komercijas produktu meklēšanas sistēma"]
+
+%% =====================================================
+%% FUNCTIONAL REQUIREMENTS + EXPLANATION
+%% =====================================================
+subgraph Funkcionalas_prasibas
+    F1[Text search\nMeklē pēc nosaukuma/apraksta]
+    F2[Kategoriju filtrs\nAtlasīt tikai noteiktu kategoriju]
+    F3[Cenu diapazons\nMin/max cena]
+    F4[Zīmolu filtrs\nAtlasīt konkrētu zīmolu]
+    F5[Pieejamība\nTikai noliktavā esošie]
+    F6[Sortēšana\nRelevance/cena/reitings]
+    F7[Auto-complete\nIeteikumi rakstot]
+    F8[Typo tolerance\nKļūdu tolerēšana]
+end
+
+%% =====================================================
+%% NON-FUNCTIONAL REQUIREMENTS
+%% =====================================================
+subgraph Nefunkcionalas_prasibas
+    N1[<200ms\nĀtra atbilde]
+    N2[1000+ queries\nDaudz lietotāju]
+    N3[1M+ produkti\nMērogojamība]
+    N4[RAM limits\nEfektīva atmiņa]
+    N5[Index <=150%\nIndeksa izmērs]
+end
+
+%% =====================================================
+%% CORE ALGORITHMS + EXPLANATION
+%% =====================================================
+subgraph Algoritmi
+    A1[Inverted Index\nVārds → produktu saraksts\nĀtra teksta meklēšana]
+    A2[Trie\nPrefiksu koks\nAuto-complete]
+    A3[HashMap\nKey → Value\nĀtri filtri]
+    A4[Sorted List\nSakārtotas cenas\nDiapazona meklēšana]
+end
+
+%% =====================================================
+%% PREFIX EXPLANATION (VERY IMPORTANT FOR SCHOOL)
+%% =====================================================
+subgraph Prefiksi_un_AutoComplete
+    P1[Prefikss = vārda sākums\npiem: "app"]
+    P2[Trie meklē visus vārdus\nkas sākas ar prefiksu]
+    P3[Rezultāts:\napple, application]
+end
+
+P1 --> P2 --> P3
+
+%% =====================================================
+%% MAIN SEARCH FLOW
+%% =====================================================
+subgraph Meklesanas_process
+    U[Lietotājs ievada tekstu]
+
+    T1[Tokenizācija\nSadala vārdos]
+    T2[Normalizācija\nLowercase + tīrīšana]
+
+    IDX[Inverted Index\nAtrod kandidātus]
+
+    TYPO[Typo tolerance\nAtrod līdzīgus vārdus]
+
+    FILT[Filtri\nKategorija, zīmols, pieejamība]
+
+    PRICE[Cenu filtrs\nMin/max]
+
+    SCORE[Relevance score\nSvarīguma aprēķins]
+
+    SORT[Kārtošana\nRelevance/cena/reitings]
+
+    RES[Rezultāti]
+
+    U --> T1 --> T2 --> IDX --> TYPO --> FILT --> PRICE --> SCORE --> SORT --> RES
+end
+
+%% =====================================================
+%% DATA MODEL + EXPLANATION
+%% =====================================================
+subgraph Datu_modelis
+    P[Product\nProdukts:\nID, nosaukums, cena,\nkategorija, zīmols, reitings]
+
+    SR[SearchResult\nProdukts + score]
+
+    P --> SR
+end
+
+%% =====================================================
+%% COMPONENTS + EXPLANATION
+%% =====================================================
+subgraph Komponentes
+    C1[SearchEngine\nGalvenā loģika]
+    C2[Trie\nAuto-complete]
+    C3[DataGenerator\nTesta dati]
+    C4[Index\nInverted Index struktūra]
+end
+
+C1 --> C2
+C1 --> C4
+C1 --> P
+
+%% =====================================================
+%% RELEVANCE FORMULA + EXPLANATION
+%% =====================================================
+subgraph Relevance
+    R1[Score formula]
+
+    R2[3x title match\nNosaukums svarīgāks]
+    R3[1x description\nApraksts mazāk svarīgs]
+    R4[+ rating\nAugstāks reitings = labāk]
+    R5[+ popularity\nPopulārāks = augstāk]
+    R6[+ freshness\nJaunāks produkts]
+
+    R1 --> R2
+    R1 --> R3
+    R1 --> R4
+    R1 --> R5
+    R1 --> R6
+end
+
+%% =====================================================
+%% COMPLEXITY + EXPLANATION
+%% =====================================================
+subgraph Kompleksitate
+    X1[Indeksēšana O(N*T)\nN=produkti, T=vārdi]
+    X2[Meklēšana O(r log r)\nr=kandidāti]
+    X3[Autocomplete O(p+s)\np=prefikss]
+    X4[Price search O(log n)\nbinary search]
+end
+
+%% =====================================================
+%% TESTING + EXPLANATION
+%% =====================================================
+subgraph Testesana
+    TST1[10K produkti\nReāli dati]
+    TST2[Performance tests\nLaika mērīšana]
+    TST3[Precizitāte\nVai rezultāti pareizi]
+    TST4[Filtru tests\nKategorija, cena utt]
+end
+
+%% =====================================================
+%% CONNECTIONS
+%% =====================================================
+Algoritmi --> Meklesanas_process
+Funkcionalas_prasibas --> Meklesanas_process
+Nefunkcionalas_prasibas --> Kompleksitate
+Komponentes --> Meklesanas_process
+Testesana --> Meklesanas_process
+Relevance --> Meklesanas_process
+Prefiksi_un_AutoComplete --> Algoritmi
