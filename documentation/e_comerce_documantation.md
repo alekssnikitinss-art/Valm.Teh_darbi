@@ -169,6 +169,69 @@ Nosaukuma sakritības ir svarīgākas par aprakstu.
 | Autocomplete | O(p + s) |
 | Cenu filtrs | O(log n) |
 
+### Apzīmējumu skaidrojums
+
+- **O(...)** — Big-O notācija, kas parāda algoritma izpildes laiku vai atmiņas patēriņu atkarībā no datu apjoma. Tā apraksta, cik ātri algoritms kļūst lēnāks, palielinoties datiem.
+
+- **N** — kopējais produktu skaits sistēmā.
+
+- **T** — vidējais vārdu (tokenu) skaits vienā produktā (nosaukumā + aprakstā).
+
+- **r** — kandidātu skaits, kas atbilst meklēšanas vaicājumam.
+
+- **p** — prefiksa garums (lietotāja ievadīto burtu skaits auto-complete funkcijā).
+
+- **s** — atrasto auto-complete variantu skaits.
+
+- **n** — elementu skaits cenu sarakstā (parasti tas pats kas produktu skaits).
+
+---
+
+### Sarežģītību skaidrojums
+
+#### Indeksēšana — O(N * T)
+
+Katram produktam tiek apstrādāti visi tā vārdi, tāpēc:
+- vairāk produktu → vairāk darba
+- garāki apraksti → vairāk tokenu
+
+Tāpēc sarežģītība ir atkarīga no produktu skaita un vārdu skaita.
+
+---
+
+#### Meklēšana — O(r log r)
+
+- vispirms tiek atrasti kandidāti (r)
+- pēc tam tie tiek sakārtoti
+
+Kārtošana ir visdārgākā daļa, tāpēc parādās **log r**.
+
+---
+
+#### Autocomplete — O(p + s)
+
+- p — cik simbolus lietotājs ievadījis
+- s — cik rezultāti jāatgriež
+
+Trie vispirms atrod prefiksu (p), tad savāc rezultātus (s).
+
+---
+
+#### Cenu filtrs — O(log n)
+
+Izmantojot bināro meklēšanu:
+- ātri atrod robežas sakārtotā sarakstā
+- nav jāpārskata visi produkti
+
+---
+
+### Kopsavilkums
+
+- Indeksēšana ir lēnāka, bet notiek tikai vienreiz.
+- Meklēšana ir ātra, jo izmanto indeksus.
+- Autocomplete ir ļoti ātrs.
+- Cenu filtrs ir efektīvs pat lieliem datiem.
+
 ---
 
 ## 11. Gadījumu analīze
