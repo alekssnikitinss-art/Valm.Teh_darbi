@@ -11,9 +11,8 @@ from difflib import get_close_matches
 from typing import Dict, List, Set, Optional, Tuple
 
 
-# =========================
 # MODEĻI
-# =========================
+
 
 @dataclass
 class Product:
@@ -34,16 +33,14 @@ class Product:
 
 @dataclass
 class SearchResult:
-    """
-    Meklēšanas rezultāta modelis ar score relevances kārtošanai.
-    """
+    
+    """Meklēšanas rezultāta modelis ar score relevances kārtošanai."""
+    
     product: Product
     score: float
 
 
-# =========================
 # PALĪGFUNKCIJAS
-# =========================
 
 def normalize_text(text: str) -> str:
     """
@@ -58,9 +55,9 @@ def normalize_text(text: str) -> str:
 
 
 def tokenize(text: str) -> List[str]:
-    """
-    Sadala tekstu tokenos.
-    """
+    
+    """Sadala tekstu tokenos."""
+    
     normalized = normalize_text(text)
     return [token for token in normalized.split() if token]
 
@@ -77,10 +74,7 @@ def safe_float(value: Optional[str], default: Optional[float] = None) -> Optiona
 def parse_date(date_str: str) -> datetime:
     return datetime.strptime(date_str, "%Y-%m-%d")
 
-
-# =========================
 # TRIE AUTO-COMPLETE
-# =========================
 
 class TrieNode:
     def __init__(self):
@@ -90,9 +84,9 @@ class TrieNode:
 
 
 class Trie:
-    """
-    Trie struktūra auto-complete funkcijai.
-    """
+    
+    """Trie struktūra auto-complete funkcijai."""
+    
     def __init__(self):
         self.root = TrieNode()
 
@@ -127,9 +121,7 @@ class Trie:
         return [word for word, _ in words[:limit]]
 
 
-# =========================
 # MEKLĒŠANAS SISTĒMA
-# =========================
 
 class SearchEngine:
     """
@@ -165,9 +157,9 @@ class SearchEngine:
         self.all_terms: Set[str] = set()
 
     def index_products(self, products: List[Product]) -> None:
-        """
-        Izveido indeksus no produktu saraksta.
-        """
+        
+        """Izveido indeksus no produktu saraksta."""
+        
         self.products_by_id.clear()
         self.title_index.clear()
         self.description_index.clear()
@@ -221,9 +213,9 @@ class SearchEngine:
         return {product_id for _, product_id in self.price_list[left:right]}
 
     def _get_typo_suggestions(self, token: str, max_suggestions: int = 3) -> List[str]:
-        """
-        Atrod līdzīgus terminus typo tolerance nodrošināšanai.
-        """
+        
+        """Atrod līdzīgus terminus typo tolerance nodrošināšanai."""
+        
         if token in self.all_terms:
             return [token]
 
@@ -244,9 +236,9 @@ class SearchEngine:
         sort_by: str = "relevance",
         limit: int = 20
     ) -> List[SearchResult]:
-        """
-        Galvenā meklēšanas funkcija.
-        """
+        
+        """Galvenā meklēšanas funkcija."""
+        
         if limit <= 0:
             raise ValueError("limit jābūt lielākam par 0")
 
@@ -330,9 +322,9 @@ class SearchEngine:
         return results[:limit]
 
 
-# =========================
+
 # TESTA DATU ĢENERATORS
-# =========================
+
 
 class DataGenerator:
     """
@@ -408,9 +400,9 @@ class DataGenerator:
         return products
 
 
-# =========================
+
 # FAILU DARBS
-# =========================
+
 
 def save_products_to_json(products: List[Product], filepath: str) -> None:
     with open(filepath, "w", encoding="utf-8") as f:
@@ -427,9 +419,9 @@ def load_products_from_json(filepath: str) -> List[Product]:
     return products
 
 
-# =========================
+
 # VEIKTSPĒJAS TESTI
-# =========================
+
 
 def benchmark_engine(engine: SearchEngine) -> None:
     """
@@ -481,9 +473,9 @@ def benchmark_engine(engine: SearchEngine) -> None:
         print("Secinājums: prasība < 200ms nav izpildīta.")
 
 
-# =========================
+
 # REZULTĀTU IZVADE
-# =========================
+
 
 def print_results(results: List[SearchResult]) -> None:
     if not results:
@@ -505,9 +497,9 @@ def print_results(results: List[SearchResult]) -> None:
         print()
 
 
-# =========================
+
 # INTERAKTĪVA IZVĒLNE
-# =========================
+
 
 def run_interactive_menu(engine: SearchEngine) -> None:
     while True:
@@ -575,9 +567,9 @@ def run_interactive_menu(engine: SearchEngine) -> None:
             print("Nepareiza izvēle.")
 
 
-# =========================
+
 # GALVENĀ FUNKCIJA
-# =========================
+
 
 def main():
     parser = argparse.ArgumentParser(description="E-komercijas produktu meklēšanas sistēma")
