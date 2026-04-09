@@ -4,8 +4,8 @@ erDiagram
 
     USER {
         int id PK
-        string name
-        string email
+        VARCHAR USERNAME
+        VARCHAR PASSWORD  
     }
 
     BOOK {
